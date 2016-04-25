@@ -16,7 +16,9 @@ No Rchunk is needed to accomplish this.
 <!--
 Read in the homework4.csv data. For each of the following steps you
 should preface your R commands with some plain English explanation.
---> The first thing to do is read in the data
+--> 
+
+The first thing to do is read in the data
 ```{r}
 dat<-read.csv("homework4.csv")
 ```
@@ -25,7 +27,9 @@ dat<-read.csv("homework4.csv")
 
 <!--
 Check the structure of the data.
---> The next step is to check the structure of the data
+--> 
+
+The next step is to check the structure of the data
 
 ```{r}
 str(dat)
@@ -34,7 +38,9 @@ str(dat)
 We see that dat is a data frame that has two variables: Agreement (whether or not the subjects agree with a certain statement), Condition (whether they are in the experimental or control group).
 <!--
 Create a table that shows how many people fell into each category.
---> I create a table to show how many people fell into each category
+--> 
+
+I create a table to show how many people fell into each category
 ```{r}
 table(dat$condition, dat$agreement)
 ```
@@ -48,7 +54,11 @@ Also, interpret the results of your test and provide a a statistical
 statement that supports your interpretation. As there's no way to
 insert the chi-square symbol, you can just use chi-square instead
 (see example4.Rmd).
---> In order to determine if the data support a relationship between Condition and Agreement, I performed a chi-square test. 
+--> 
+
+
+In order to determine if the data support a relationship between Condition and Agreement, I performed a chi-square test. 
+
 ```{r}
 chisq.test(dat$condition,dat$agreement)
 ```

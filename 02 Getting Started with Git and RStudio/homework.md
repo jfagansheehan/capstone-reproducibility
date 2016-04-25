@@ -4,11 +4,15 @@
 
 
 <!--Create an subtitle using a smaller heading for your favorite
-foods-->## My Favorite Foods
+foods-->
+
+## My Favorite Foods
 
 
 
-<!--Create an ordered list of your three favorite foods--> ### An Ordered List of My Favorite Foods
+<!--Create an ordered list of your three favorite foods--> 
+
+### An Ordered List of My Favorite Foods
 1. Seafood
 2. Spinach
 3. Asparagus
@@ -17,11 +21,15 @@ foods-->## My Favorite Foods
 
 <!--Create an subtitle using a the same heading you used before\
 for your favorite
-psychology classes-->## My Favorite Psychology Classes
+psychology classes-->
+
+## My Favorite Psychology Classes
 
 
 
-<!--Create an unordered list of your three favorite psych classes--> ### An Unordered List of Favorite Psych Classes
+<!--Create an unordered list of your three favorite psych classes--> 
+
+### An Unordered List of Favorite Psych Classes
 * Family Therapy Systems
 * Personality
 * Cognitive Psych
