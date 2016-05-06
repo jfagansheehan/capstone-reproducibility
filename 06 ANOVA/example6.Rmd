@@ -1,5 +1,6 @@
 ## Example 6
 
+
 <!--
 Set the working directory.
 No Rchunk is needed to accomplish this.

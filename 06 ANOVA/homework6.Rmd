@@ -1,4 +1,10 @@
-## Example 6
+## Homework 6
+
+We will need the ggplot2, gplots and dplyr packages so first I will load those. 
+
+library (ggplot2)
+library (gplots)
+library (dplyr)
 
 <!--
 Set the working directory.
@@ -16,14 +22,31 @@ X among green Xs and red Os). We're also looking at how the number
 of distractors within the search display effect our data.
 -->
 
+After loading the packages above and setting the session, it is time to read in the data.
 
+```{r}
+dat<-read.csv("homework6.csv")
+```
 
 <!--
 Check the structure of the data and change any variables that should
 be factor variables into factor variables
 -->
 
+Next I check the structure of the data
 
+```{r}
+str(dat)
+```
+
+From the structure we can see that type, subject, and subject2
+should all be factor variables. So this needs to be fixed as follows
+
+```{r}
+dat$distractors<-as.factor(dat$distractors)
+dat$subject<-as.factor(dat$subject)
+dat$subject2<-as.factor(dat$subject2)
+```
 
 <!--
 Perform a one-way between-subjects ANOVA examining for effects of 
@@ -32,14 +55,75 @@ Also create a line graph to help you interpret the results of your
 analysis.
 -->
 
+Before we can run first ANOVA, first we need to get only the data from the conjunction searches.
 
+```{r}
+temp<-dat[dat$type=="conjunction",]
+```
+
+Now we can run our ANOVA.
+
+```{r}
+summary(aov(rt~distractors, data=temp))
+```
+
+From the results, we see there is an effect of the number of distractors F(2,21) = 8.6, p = .0019.
+
+To better understand the data I will make a line graph
+
+```{r}
+
+library(ggplot2)
+library(gplots)
+library(dplyr)
+
+temp<-dat%>%group_by(distractors)%>%
+  summarize(means=mean(rt),
+            sems=sd(rt)/sqrt(length(rt)))
+
+f<-ggplot(temp, aes(x=as.factor(distractors),
+                    y=means,
+                    group=1))+
+  geom_line(size=1)+
+  geom_point(size=2)+
+  geom_errorbar(aes(ymax=means+sems,
+                    ymin=means-sems),
+                width=.2)+
+  ggtitle("Effect of Distractors")+
+  labs(x="Number of Distractors",y="Response Time")+
+  theme(plot.title=element_text(size=15,face="bold",vjust=.5))+
+  theme(axis.title.x=element_text(size=12,face="bold",vjust=-.25))+
+  theme(axis.title.y=element_text(size=12,face="bold",vjust=1))+
+  theme(axis.text.x=element_text(size=10,face="bold",color="black"))+
+  theme(axis.text.y=element_text(size=10,face="bold",color="black"))+
+  coord_cartesian(ylim=c(min(temp$means)-2*max(temp$sems),
+                         max(temp$means)+2*max(temp$sems)))+
+  theme(panel.border=element_blank(),axis.line=element_line())+
+  theme(panel.grid.major.x=element_blank())+
+  theme(panel.grid.major.y=element_line(color="darkgrey"))+
+  theme(panel.grid.minor.y=element_blank())
+f
+```
 
 <!--
 Perform a one-way within subjects ANOVA on the same data you analyzed
 earlier. Tip: use subject as the subjects variable for this analysis.
 -->
 
+Now I will conduct a one-way within subjects ANOVA. Previously, I changed temp to make my graph, so I will need to use the code I used earlier to create temp so that I am using the same data as I had prior to the change.
 
+```{r}
+temp<-dat[dat$type=="conjunction",]
+```
+
+I have my data from earlier now and can proceed with running the one-way within subjects ANOVA.
+
+```{r}
+summary(aov(rt~distractors+
+              Error(subject/distractors),data=temp))
+```
+
+The number  of distractors (independent variable) increased and as it did so, the participants needed more time to respond (dependent variable), F(2,14) = 56.5, p < .05.
 
 <!--
 Perform a between-subjects ANOVA examining for the effects of and
@@ -47,16 +131,103 @@ interactions between the number of distractors and the search type.
 Make sure to interpret your results.
 -->
 
+For the next step, I will perform a between-subjects ANOVA to look for effects of, and interactions between, the number of distractors and the search type.
+
+```{r}
+summary(aov(rt~distractors*type, data=dat))
+```
+
+This analyses shows that there was no effect of the number of distractors, F(2,42) = 2.65, p = .0826. There was an effect of search type. Participants within the conjunction search required more time to respond as the number of distractors increased but participants in the feature search required less time to respond as the number of distractors increased, F(1,42) = 459.4, p < .05. There was no interaction between number of distractors and search type, F(2,42) = 7.84, p = .0013.
+
+To help me interpret this data, I need to create a line and grouped bar graphs for the data I analyzed. But first I will need to summarize the data.
+
+
+```{r}
+temp<-dat%>%group_by(distractors,type)%>%
+  summarize(means=mean(rt),
+            sems=sd(rt)/sqrt(length(n)))
+```
 <!--
 Create a line graph and a grouped bar graph to help us interpret
 the results of the previous analyses. Include error bars in your
 figures.
 -->
 
+Now I can create the figures.
+
+```{r}
+f<-ggplot(temp, aes(x=distractors,
+                    y=means,
+                    group=type,
+                    color=type))+
+  geom_line(size=1)+
+  geom_point(size=2)+
+  scale_color_manual(values=c("darkgreen","red"),
+                     name="Type",
+                     breaks=c("conjunction","feature"),
+                     labels=c("Conjunction", "Feature"))+
+  geom_errorbar(aes(ymax=means+sems, ymin=means-sems),width=.2)+
+  ggtitle("Effect of Distractors on Type of Distractor")+
+  labs(x="Distractors",y="Response Time")+
+  theme(plot.title=element_text(size=15,face="bold",vjust=.5))+
+  theme(axis.title.x=element_text(size=12,face="bold",vjust=-.25))+
+  theme(axis.title.y=element_text(size=12,face="bold",vjust=1))+
+  theme(axis.text.x=element_text(size=10,face="bold",color="black"))+
+  theme(axis.text.y=element_text(size=10,face="bold",color="black"))+
+  coord_cartesian(ylim=c(min(temp$means)-2*max(temp$sems),
+                         max(temp$means)+2*max(temp$sems)))+
+  theme(panel.border=element_blank(),axis.line=element_line())+
+  theme(panel.grid.major.x=element_blank())+
+  theme(panel.grid.major.y=element_line(color="darkgrey"))+
+  theme(panel.grid.minor.y=element_blank())+
+  theme(legend.position=c(.2,.86))+
+  theme(legend.background=element_blank())+
+  theme(legend.background=element_rect(color="black"))+
+  theme(legend.title=element_blank())+
+  theme(legend.title=element_text(size=12))+
+  theme(legend.title.align=.5)+
+  theme(legend.text=element_text(size=10,face="bold"))
+f
+
+f<-ggplot(temp, aes(x=type,
+                    y=means,
+                    fill=type))+
+  geom_bar(stat="identity",position=position_dodge())+
+  scale_fill_manual(values=c("darkgreen","red"),
+                     name="Type",
+                     breaks=c("conjunction","feature"),
+                     labels=c("Conjunction","Feature"))+
+  geom_errorbar(aes(ymax=means+sems,
+                    ymin=means-sems),
+                width=.2,
+                position=position_dodge(.9))+
+  ggtitle("Effect of Search Type")+
+  labs(x="Response Time",y="Search Type")+
+  theme(plot.title=element_text(size=15,face="bold",vjust=.5))+
+  theme(axis.title.x=element_text(size=12,face="bold",vjust=-.25))+
+  theme(axis.title.y=element_text(size=12,face="bold",vjust=1))+
+  theme(axis.text.x=element_text(size=10,face="bold",color="black"))+
+  theme(axis.text.y=element_text(size=10,face="bold",color="black"))+
+  coord_cartesian(ylim=c(min(temp$means)-2*max(temp$sems),
+                         max(temp$means)+2*max(temp$sems)))+
+  theme(panel.border=element_blank(),axis.line=element_line())+
+  theme(panel.grid.major.x=element_blank())+
+  theme(panel.grid.major.y=element_line(color="darkgrey"))+
+  theme(panel.grid.minor.y=element_blank())+
+  theme(legend.position=c(.7,.82))+
+  theme(legend.background=element_blank())+
+  theme(legend.background=element_rect(color="black"))+
+  theme(legend.title=element_blank())+
+  theme(legend.title=element_text(size=12))+
+  theme(legend.title.align=.5)+
+  theme(legend.text=element_text(size=10,face="bold"))
+f
+```
 <!--
 Interpret the statistical results in light of the figures.
 -->
 
+What we can determine from these figures and the earlier analyses is that it appears the number of distractors increased, and the time needed to respond increased for one search type but not the other.  We can see that search type affected the participants response time.  That is participants in the conjunction search type required longer response times as the number of distractors increased compared to the feature search type where the participants response time decreased as the number of distractors increased.  There was no interaction between number of distractors and search type.
 
 <!--
 Perform a within-subjects two-way ANOVA examining for the effects
@@ -66,7 +237,22 @@ Interpret the results of the analysis based on the statistical
 results and your earlier figures.
 -->
 
+Next I will performing a within-subjects two-way ANOVA to examine for
+the effects of and interactions between number of distractors and search type.
 
+
+```{r}
+summary(aov(rt~distractors*type+
+              Error(subject/(distractors*type)),
+                    data=dat))
+```
+
+Based upon these analyses and the resulting figures, we can see that the number of distractors affected the participant's response time significantly, F(2,14) =
+11.2, p = .0013. 
+
+In addition, we see that participants in the conjunctive search type required more time to respond to the increased number of distractors, F(1,7) = 1626, p < .05. 
+
+Lastly, we can see that participants in the feature search type decreased response time as the number of distractors increased, F(2,14) = 32.1, p < .05.
 
 <!--
 Finally conduct and interpret the results of a mixed ANOVA in which
@@ -74,3 +260,16 @@ number of distractors varies within subjects and the type of search
 varies between subjects. Make sure to interpret your results. Tip:
 use subject2 as your subject's variable for this analysis.
 -->
+
+For my final attempt at dominating RStudio, I will conduct a mixed ANOVA in which number of distractors varies within subject and the type of search varies bewteen subjects.
+
+```{r}
+summary(aov(rt~distractors*type+
+              Error(subject2/distractors),
+            data=dat))
+```
+From this final analyses, we can see that the number of distractors affected participants response time in the feature search type, F(1,14) = 182.4, p < .05. 
+
+Also, we see that participants in the feature search type decreased response time as the number of distractors increased, F(2,28) = 11.0, p < .05.
+
+Lastly, we can see that there appears to be an effect that is significant on the number of distractors and the search type, F(2,28) = 32.5, p < .05.
