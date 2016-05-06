@@ -154,7 +154,6 @@ figures.
 -->
 
 Now I can create the figures.
-
 ```{r}
 f<-ggplot(temp, aes(x=distractors,
                     y=means,
@@ -165,10 +164,44 @@ f<-ggplot(temp, aes(x=distractors,
   scale_color_manual(values=c("darkgreen","red"),
                      name="Type",
                      breaks=c("conjunction","feature"),
-                     labels=c("Conjunction", "Feature"))+
+                     labels=c("conjunction", "feature"))+
   geom_errorbar(aes(ymax=means+sems, ymin=means-sems),width=.2)+
-  ggtitle("Effect of Distractors on Type of Distractor")+
-  labs(x="Distractors",y="Response Time")+
+  ggtitle("Performance by Type with Distractors")+
+  labs(x="Distractors",y="Means")+
+  theme(plot.title=element_text(size=15,face="bold",vjust=.5))+
+  theme(axis.title.x=element_text(size=12,face="bold",vjust=-.25))+
+  theme(axis.title.y=element_text(size=12,face="bold",vjust=1))+
+  theme(axis.text.x=element_text(size=10,face="bold",color="black"))+
+  theme(axis.text.y=element_text(size=10,face="bold",color="black"))+
+  coord_cartesian(ylim=c(min(temp$means)-2*max(temp$sems),
+                         max(temp$means)+2*max(temp$sems)))+
+  theme(panel.border=element_blank(),axis.line=element_line())+
+  theme(panel.grid.major.x=element_blank())+
+  theme(panel.grid.major.y=element_line(color="darkgrey"))+
+  theme(panel.grid.minor.y=element_blank())+
+  theme(legend.position=c(.2,.85))+
+  theme(legend.background=element_blank())+
+  theme(legend.background=element_rect(color="black"))+
+  theme(legend.title=element_blank())+
+  theme(legend.title=element_text(size=12))+
+  theme(legend.title.align=.5)+
+  theme(legend.text=element_text(size=10,face="bold"))
+f
+
+f<-ggplot(temp, aes(x=distractors,
+                    y=means,
+                    fill=type))+
+  geom_bar(stat="identity",position=position_dodge())+
+  scale_fill_manual(values=c("darkgreen","red"),
+                     name="Type",
+                     breaks=c("conjunction","feature"),
+                     labels=c("conjunction", "feature"))+
+  geom_errorbar(aes(ymax=means+sems,
+                    ymin=means-sems),
+                width=.2,
+                position=position_dodge(.9))+
+  ggtitle("Performance by Type with Distractors")+
+  labs(x="Distractors",y="Means")+
   theme(plot.title=element_text(size=15,face="bold",vjust=.5))+
   theme(axis.title.x=element_text(size=12,face="bold",vjust=-.25))+
   theme(axis.title.y=element_text(size=12,face="bold",vjust=1))+
@@ -181,40 +214,6 @@ f<-ggplot(temp, aes(x=distractors,
   theme(panel.grid.major.y=element_line(color="darkgrey"))+
   theme(panel.grid.minor.y=element_blank())+
   theme(legend.position=c(.2,.86))+
-  theme(legend.background=element_blank())+
-  theme(legend.background=element_rect(color="black"))+
-  theme(legend.title=element_blank())+
-  theme(legend.title=element_text(size=12))+
-  theme(legend.title.align=.5)+
-  theme(legend.text=element_text(size=10,face="bold"))
-f
-
-f<-ggplot(temp, aes(x=type,
-                    y=means,
-                    fill=type))+
-  geom_bar(stat="identity",position=position_dodge())+
-  scale_fill_manual(values=c("darkgreen","red"),
-                     name="Type",
-                     breaks=c("conjunction","feature"),
-                     labels=c("Conjunction","Feature"))+
-  geom_errorbar(aes(ymax=means+sems,
-                    ymin=means-sems),
-                width=.2,
-                position=position_dodge(.9))+
-  ggtitle("Effect of Search Type")+
-  labs(x="Response Time",y="Search Type")+
-  theme(plot.title=element_text(size=15,face="bold",vjust=.5))+
-  theme(axis.title.x=element_text(size=12,face="bold",vjust=-.25))+
-  theme(axis.title.y=element_text(size=12,face="bold",vjust=1))+
-  theme(axis.text.x=element_text(size=10,face="bold",color="black"))+
-  theme(axis.text.y=element_text(size=10,face="bold",color="black"))+
-  coord_cartesian(ylim=c(min(temp$means)-2*max(temp$sems),
-                         max(temp$means)+2*max(temp$sems)))+
-  theme(panel.border=element_blank(),axis.line=element_line())+
-  theme(panel.grid.major.x=element_blank())+
-  theme(panel.grid.major.y=element_line(color="darkgrey"))+
-  theme(panel.grid.minor.y=element_blank())+
-  theme(legend.position=c(.7,.82))+
   theme(legend.background=element_blank())+
   theme(legend.background=element_rect(color="black"))+
   theme(legend.title=element_blank())+
